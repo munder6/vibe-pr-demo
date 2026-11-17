@@ -17,3 +17,8 @@ function render() {
 
 document.getElementById("apply").addEventListener("click", render);
 document.getElementById("qty").addEventListener("input", render);
+
+document.getElementById("pay").addEventListener("click", async () => {
+  const r = await fetch("api/checkout", { method: "POST" }).then((x) => x.json()).catch(() => null);
+  document.getElementById("paid").textContent = r && r.ok ? r.message : "Payment failed.";
+});
