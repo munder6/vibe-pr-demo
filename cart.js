@@ -10,7 +10,8 @@ function total(qty, coupon) {
 
 function render() {
   const qty = Math.max(1, parseInt(document.getElementById("qty").value, 10) || 1);
-  const coupon = document.getElementById("coupon").value.trim();
+  // Coupon codes are accepted in any case ("save10", "Save10", "SAVE10").
+  const coupon = document.getElementById("coupon").value.trim().toLowerCase();
   document.getElementById("total").textContent = `Total: ${total(qty, coupon)} USD`;
   document.getElementById("note").textContent = coupon && !COUPONS[coupon] ? "That coupon is not valid." : "";
 }
