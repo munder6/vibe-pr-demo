@@ -1,0 +1,19 @@
+// Cart total: price × quantity, minus a coupon.
+const PRICE = 100;
+const COUPONS = { SAVE10: 0.1, SAVE25: 0.25 };
+
+function total(qty, coupon) {
+  const subtotal = PRICE * qty;
+  const off = COUPONS[coupon] || 0;
+  return Math.round(subtotal * (1 - off) * 100) / 100;
+}
+
+function render() {
+  const qty = Math.max(1, parseInt(document.getElementById("qty").value, 10) || 1);
+  const coupon = document.getElementById("coupon").value.trim();
+  document.getElementById("total").textContent = `Total: ${total(qty, coupon)} USD`;
+  document.getElementById("note").textContent = coupon && !COUPONS[coupon] ? "That coupon is not valid." : "";
+}
+
+document.getElementById("apply").addEventListener("click", render);
+document.getElementById("qty").addEventListener("input", render);

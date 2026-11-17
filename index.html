@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vibe PR Demo Shop</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><h1>Demo Shop</h1><nav><a href="index.html">Shop</a> · <a href="contact.html">Contact</a></nav></header>
+<main>
+  <section class="product">
+    <h2>Desk lamp</h2>
+    <p>A warm, dimmable desk lamp.</p>
+    <p class="price">Price: <span id="price">100</span> USD</p>
+    <label>Quantity <input id="qty" type="number" min="1" value="1"></label>
+  </section>
+  <section class="cart">
+    <label>Coupon <input id="coupon" placeholder="e.g. SAVE10"></label>
+    <button id="apply">Apply</button>
+    <p id="total">Total: 100 USD</p>
+    <p id="note"></p>
+  </section>
+</main>
+<script src="cart.js"></script>
+</body>
+</html>

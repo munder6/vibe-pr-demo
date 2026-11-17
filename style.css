@@ -1,0 +1,6 @@
+body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+header { display: flex; justify-content: space-between; align-items: baseline; }
+section { border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+input { margin-left: .5rem; padding: .3rem; }
+button { padding: .4rem .9rem; }
+#total { font-weight: 600; font-size: 1.2rem; }
