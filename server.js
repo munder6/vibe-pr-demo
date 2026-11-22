@@ -1,7 +1,9 @@
-// Serves the shop locally exactly as GitHub Pages does: the static files in this folder.
+// Serves the shop: the static files in this folder, plus sign-in and the account page.
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
+const users = require("./lib/users");
 const PORT = Number(process.env.PORT || 8080);
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css" };
 http.createServer((req, res) => {
