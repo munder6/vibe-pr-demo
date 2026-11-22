@@ -18,7 +18,29 @@ function render() {
 document.getElementById("apply").addEventListener("click", render);
 document.getElementById("qty").addEventListener("input", render);
 
-document.getElementById("pay").addEventListener("click", async () => {
-  const r = await fetch("api/checkout", { method: "POST" }).then((x) => x.json()).catch(() => null);
-  document.getElementById("paid").textContent = r && r.ok ? r.message : "Payment failed.";
+const payButton = document.getElementById("pay");
+const paid = document.getElementById("paid");
+
+payButton.addEventListener("click", async () => {
+  if (payButton.disabled) return;
+  payButton.disabled = true;
+  paid.textContent = "";
+  const qty = Math.max(1, parseInt(document.getElementById("qty").value, 10) || 1);
+  const coupon = document.getElementById("coupon").value.trim();
+  const failed = "Payment failed. Your order was not placed.";
+  try {
+    const res = await fetch("api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ qty, coupon }),
+    });
+    const data = await res.json().catch(() => null);
+    // "Order placed" is written only when the server answers with an order reference.
+    if (res.ok && data && data.ok && data.orderRef) paid.textContent = `Order placed (reference ${data.orderRef})`;
+    else paid.textContent = (data && data.message) || failed;
+  } catch {
+    paid.textContent = failed;
+  } finally {
+    payButton.disabled = false;
+  }
 });
