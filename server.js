@@ -1,7 +1,9 @@
-// Serves the shop locally exactly as GitHub Pages does: the static files in this folder.
+// Serves the shop: the static files in this folder, plus sign-in and the account page.
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
+const users = require("./lib/users");
 const PORT = Number(process.env.PORT || 8080);
 // Checkout talks to Stripe from the server: without a secret key nothing can be paid for.
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || "";
@@ -66,7 +68,7 @@ http.createServer((req, res) => {
   if (p === "/api/checkout" && req.method === "POST") return checkout(req, res);
   const file = path.join(__dirname, p === "/" ? "index.html" : p.replace(/^\/+/, ""));
   if (!file.startsWith(__dirname) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
-    res.writeHead(404, { "Content-Type": "text/html" });
+    res.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });
     return res.end("<h1>404 — page not found</h1>");
   }
   res.writeHead(200, { "Content-Type": TYPES[path.extname(file)] || "application/octet-stream" });
