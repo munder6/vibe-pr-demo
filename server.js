@@ -5,16 +5,16 @@ const path = require("path");
 const crypto = require("crypto");
 const users = require("./lib/users");
 const PORT = Number(process.env.PORT || 8080);
-// Checkout talks to Stripe from the server: without a secret key nothing can be paid for.
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || "";
-if (!/^sk_(test|live)_/.test(STRIPE_SECRET_KEY)) {
-  console.error("STRIPE_SECRET_KEY is missing or not a Stripe secret key (sk_test_... / sk_live_...). Checkout cannot start.");
-  process.exit(1);
+// Checkout talks to Stripe from the server, but only a payment needs the secret key:
+// the shop itself must start and serve its pages with no setup.
+const STRIPE_KEY_MESSAGE = "STRIPE_SECRET_KEY is missing or not a Stripe secret key (sk_test_... / sk_live_...). Checkout cannot start.";
+function stripeKeyIsSet() {
+  return /^sk_(test|live)_/.test(process.env.STRIPE_SECRET_KEY || "");
 }
 // Same figures as cart.js (PRICE, COUPONS) — the page and the server must agree on the amount.
 const PRICE = 100;
 const COUPONS = { SAVE10: 0.1, SAVE25: 0.25 };
-// No payment provider is wired in yet: the key above is only format-checked, never used to charge.
+// No payment provider is wired in yet: the key is only format-checked, never used to charge.
 // Until one is, checkout must refuse — it may never answer success without an order reference.
 const paymentProvider = null;
 
@@ -24,6 +24,11 @@ function sendJson(res, status, body) {
 }
 
 function checkout(req, res) {
+  if (!stripeKeyIsSet()) {
+    // Answer this one request; the shop keeps serving. Drain the body so the connection closes cleanly.
+    req.resume();
+    return sendJson(res, 503, { ok: false, message: `${STRIPE_KEY_MESSAGE} Your order was not placed and you were not charged.` });
+  }
   let raw = "";
   let tooBig = false;
   req.on("data", (chunk) => {
