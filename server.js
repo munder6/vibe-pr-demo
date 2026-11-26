@@ -50,7 +50,8 @@ function checkout(req, res) {
     if (typeof coupon !== "string") {
       return sendJson(res, 400, { ok: false, message: "The coupon could not be read. Your order was not placed." });
     }
-    const code = coupon.trim();
+    // Same rule as the shop page (cart.js): trim, then upper-case, so "save10" works at Pay as it does at Apply.
+    const code = coupon.trim().toUpperCase();
     if (code && !Object.prototype.hasOwnProperty.call(COUPONS, code)) {
       return sendJson(res, 422, { ok: false, message: "That coupon is not valid. Your order was not placed." });
     }
