@@ -49,8 +49,13 @@ test("unknown coupon is refused", async () => {
   assert.strictEqual((await post(JSON.stringify({ qty: 7, coupon: "BOGUS" }))).status, 422);
 });
 
+test("unknown coupon is still refused after case folding", async () => {
+  assert.strictEqual((await post(JSON.stringify({ qty: 1, coupon: "save99" }))).status, 422);
+  assert.strictEqual((await post(JSON.stringify({ qty: 1, coupon: "constructor" }))).status, 422);
+});
+
 test("valid order with no payment provider is 503 with the computed amount and no success", async () => {
-  const cases = [[7, "", 700], [3, "", 300], [2, "SAVE10", 180], [1, " SAVE25 ", 75]];
+  const cases = [[7, "", 700], [3, "", 300], [2, "SAVE10", 180], [1, " SAVE25 ", 75], [1, "save25", 75], [2, " Save10 ", 180]];
   for (const [qty, coupon, amount] of cases) {
     const r = await post(JSON.stringify({ qty, coupon, total: amount }));
     const j = await r.json();
